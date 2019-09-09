@@ -1,6 +1,6 @@
 <template>
   <div class="page-register">
-    <!-- <article class="header">
+    <article class="header">
       <header>
         <a href="/" class="site-logo" />
           <span class="login">
@@ -9,7 +9,7 @@
           </span>
         </a>
       </header>
-    </article> -->
+    </article>
     <section>
       <el-form ref="ruleForm" :model="ruleForm" :rules="rules" label-width="100px" class="demo-ruleForm">
         <el-form-item label="昵称" prop="name">
@@ -54,12 +54,95 @@
           code:'',
           pwd:'',
           cpwd:''
+        },
+        rules:{
+          name:[
+            {
+              required:true,
+              type:'string',
+              message:'请输入昵称',
+              trigger:'blur'
+            }
+          ],
+          email:[
+            {
+              required:true,
+              message:'请输入邮箱',
+              trigger:'blur'
+            },{
+              type:'email',
+              message:'请输入正确的邮箱',
+              trigger:'blur'
+            }
+          ],
+          pwd:[
+            {
+              required:true,
+              message:'创建密码',
+              trigger:'blur'
+            }
+          ],
+          cpwd:[
+            {
+              required:true,
+              message:'确认密码',
+              trigger:'blur'
+            },{
+              validator:(rule,value,callback)=>{
+                if(value === ''){
+                  callback(new Error('请再次输入密码'))
+                }else if(value !== this.ruleForm.pwd){
+                  callback(new Error('两次输入不一致'))
+                }else{
+                  callback()
+                }
+              },
+              trigger:'blur'
+            }
+          ]
         }
       }
     },
     methods: {
       sendMsg() {
-        
+        let namePass
+        let emailPass
+        if(this.timerid){
+          return false
+        }
+        this.$refs.ruleForm.validateField('name',(valid)=>{
+          namePass = valid //valid有值表示验证没通过
+        })
+        this.statusMsg = ''
+        if(namePass){
+          return false
+        }
+        this.$refs.ruleForm.validateField('email',(valid)=>{
+          emailPass = valid
+        })
+        if( !namePass && !emailPass){
+          //$axios 在 nuxt.config.js通过modules配置了，
+          //然后被挂在了vue实例下，所以可以直接用
+          this.$axios.post('/users/verify',{
+            username:encodeURIComponent(this.ruleForm.name),
+            email:this.ruleForm.email
+          }).then(({status,data})=> {
+            if(status === 200 && data && data.code === 0){
+              let count = 60;
+              this.statusMsg = `验证码已发送，剩余${count--}秒`
+              this.timerid = setInterval(()=>{
+                this.statusMsg = `验证码已发送，剩余${count--}秒`
+                if(count === 0){
+                  clearInterval(this.timerid)
+                }
+              },1000)
+            }else{
+              this.statusMsg = data.msg
+            }
+          }).catch((err) => {
+            
+          });
+        }
       },
       register(){
         

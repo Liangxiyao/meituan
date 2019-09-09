@@ -2,11 +2,43 @@ import Koa from 'koa'
 import consola from 'consola'
 import { Nuxt, Builder } from 'nuxt'
 
+/******add start************ */
+import mongoose from 'mongoose';
+import bodyParser from 'koa-bodyparser'; //post请求必须
+import session from 'koa-generic-session';
+import Redis from 'koa-redis';
+import json from 'koa-json';  //向客户端输出的json进行美化
+import dbConfig from './dbs/config';
+import passport from './interface/utils/passport';
+import users from './interface/user';
+/************ add end************ */
+
+
 const app = new Koa()
+
+app.keys = ['mt', 'keyskeys'] //密钥
+app.proxy = true
+app.use(session({ //配置session
+  key: 'mt',
+  prefix: 'mt:uid', //前缀描述
+  store:new Redis() //session存储在redis里
+}))
+app.use(bodyParser({  //post处理
+  extendTypes:['json','form','text']
+}))
+app.use(json())
+
+//连接数据库
+mongoose.connect(dbConfig.dbs, {
+  useNewUrlParser:true
+})
+app.use(passport.initialize())
+app.use(passport.session())
+
 
 // Import and Set Nuxt.js options
 import config from '../nuxt.config.js'
-config.dev = app.env !== 'production'
+config.dev = app.env !== 'production' 
 
 async function start () {
   // Instantiate nuxt.js
@@ -24,6 +56,10 @@ async function start () {
   } else {
     await nuxt.ready()
   }
+
+  /*********add  start*********** */
+  app.use(users.routes()).use(users.allowedMethods())
+  /*********add  end*********** */
 
   app.use((ctx) => {
     ctx.status = 200
