@@ -20,3 +20,6 @@ $ npm run generate
 ```
 
 For detailed explanation on how things work, check out [Nuxt.js docs](https://nuxtjs.org).
+
+
+为了支持babel，需要安装babel-preset-es2015， babel-cli，babel-core

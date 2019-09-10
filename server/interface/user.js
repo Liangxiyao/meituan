@@ -113,11 +113,9 @@ router.post('/signin', async (ctx, next) => {
 
 //验证码
 router.post('/verify', async (ctx, next) => {
-  console.log(1)
   let username = ctx.request.body.username
   const saveExpire = await Store.hget(`nodemail:${username}`, 'expire')
   if (saveExpire && new Date().getTime() - saveExpire < 0) {
-    console.log(2)
     ctx.body = {
       code: -1,
       msg:'验证请求过于频繁，请稍后再试'
@@ -126,9 +124,7 @@ router.post('/verify', async (ctx, next) => {
   }
 
   let transporter = nodeMailer.createTransport({
-    host: Email.smtp.host,
-    port: 587,
-    secure: false,
+    service: 'qq',
     auth: {
       user: Email.smtp.user,
       pass: Email.smtp.pass
@@ -144,11 +140,9 @@ router.post('/verify', async (ctx, next) => {
     from: `认证邮件<${Email.smtp.user}>`,
     to: ko.email,
     subject: '注册验证码',
-    html:`您正在注册，邀请码是${ko.code}`
+    html:`测试：注册邀请码是${ko.code}`
   }
-  console.log(4)
   await transporter.sendMail(mailOptions, (error, info) => {
-    console.log(3)
     if (error) {
       return console.log(error)
     } else {

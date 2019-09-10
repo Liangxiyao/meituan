@@ -17,7 +17,13 @@
       return{
         user:''
       }
-    }
+    },
+    async mounted () {
+      const {status,data} = await this.$axios.get('/users/gerUser')
+      if(status === 200){
+        this.user = data.user
+      }
+    },
   }
 </script>
 
