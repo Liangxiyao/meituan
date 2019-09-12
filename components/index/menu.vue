@@ -21,36 +21,7 @@
     data() {
       return {
         kind:'',  //hover时候的类型
-        menu: [
-          {
-            type:'food',
-            name:'美食',
-            child:[
-              {
-                title:'美食',
-                child:['饮品','代金券','小吃']
-              }
-            ]
-          },{
-            type:'takeout',
-            name:'外卖',
-            child:[
-              {
-                title:'外卖',
-                child:['美团外卖']
-              }
-            ]
-          },{
-            type:'hotel',
-            name:'酒店',
-            child:[
-              {
-                title:'酒店',
-                child:['经济型','舒适型','高档型']
-              }
-            ]
-          }
-        ]
+        menu: this.$store.state.home.menu
       }
     },
     computed: {

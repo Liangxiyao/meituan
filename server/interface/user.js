@@ -158,6 +158,7 @@ router.post('/verify', async (ctx, next) => {
 })
 //*************退出************ */
 router.get('/exit', async (ctx, next) => {
+  console.log(ctx)
   await ctx.logout()
   if (!ctx.isAuthenticated()) {
     ctx.body = {
@@ -171,7 +172,7 @@ router.get('/exit', async (ctx, next) => {
 })
 
 router.get('/gerUser', async (ctx) => {
-  if (ctx.isAuthenticated()) {  //passport 的api
+  if (ctx.isAuthenticated()) {  //passport 的api,判断是否认证
     const { username, email } = ctx.session.passport.user //登陆成功则session中存的passport 
     ctx.body = {
       user: username,

@@ -11,6 +11,8 @@ import json from 'koa-json';  //向客户端输出的json进行美化
 import dbConfig from './dbs/config';
 import passport from './interface/utils/passport';
 import users from './interface/user';
+import geo from './interface/geo';
+
 /************ add end************ */
 
 
@@ -32,6 +34,12 @@ app.use(json())
 mongoose.connect(dbConfig.dbs, {
   useNewUrlParser:true
 })
+
+// app.use(passport.initialize())
+// 会在请求周期ctx对象挂载以下方法与属性
+// ctx.state.user 认证用户
+// ctx.login(user) 登录用户（序列化用户）
+// ctx.isAuthenticated() 判断是否认证
 app.use(passport.initialize())
 app.use(passport.session())
 
@@ -57,9 +65,10 @@ async function start () {
     await nuxt.ready()
   }
 
-  /*********add  start*********** */
+  /*********路由表  start*********** */
   app.use(users.routes()).use(users.allowedMethods())
-  /*********add  end*********** */
+  app.use(geo.routes()).use(geo.allowedMethods())
+  /*********路由表  end*********** */
 
   app.use((ctx) => {
     ctx.status = 200
