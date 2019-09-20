@@ -44,6 +44,7 @@
   </section>
 </template>
 <script>
+import _ from 'lodash';
 export default {
   data: () => {
     return {
@@ -62,60 +63,62 @@ export default {
       return this.list[this.kind]
     }
   },
-  // async mounted(){
-  //   let self=this;
-  //   let {status,data:{count,pois}}=await self.$axios.get('/search/resultsByKeywords',{
-  //     params:{
-  //       keyword:'景点',
-  //       city:self.$store.state.geo.position.city
-  //     }
-  //   })
-  //   if(status===200&&count>0){
-  //     let r= pois.filter(item=>item.photos.length).map(item=>{
-  //       return {
-  //         title:item.name,
-  //         pos:item.type.split(';')[0],
-  //         price:item.biz_ext.cost||'暂无',
-  //         img:item.photos[0].url,
-  //         url:'//abc.com'
-  //       }
-  //     })
-  //     self.list[self.kind]=r.slice(0,9)
-  //   }else{
-  //     self.list[self.kind]=[]
-  //   }
-  // },
+  async mounted(){
+    let self=this;
+    let {status,data:{count,pois}}=await self.$axios.get('/search/resultsByKeywords',{
+      params:{
+        keyword:'景点',
+        city:self.$store.state.geo.position.city
+      }
+    })
+    if(status===200&&count>0){
+      let r= pois.filter(item=>item.photos.length).map(item=>{
+        return {
+          title:item.name,
+          pos:item.type.split(';')[0],
+          price:item.biz_ext.cost||'暂无',
+          img:item.photos[0].url,
+          url:'//abc.com'
+        }
+      })
+      self.list[self.kind]=r.slice(0,9)
+    }else{
+      self.list[self.kind]=[]
+    }
+  },
   methods: {
-    over: async function (e) {
+    over:_.debounce(async function (e) {
       let dom = e.target
       let tag = dom.tagName.toLowerCase()
       let self = this
       if (tag === 'dd') {
         this.kind = dom.getAttribute('kind')
         let keyword = dom.getAttribute('keyword')
-        let {status,data:{count,pois}}=await self.$axios.get('/search/resultsByKeywords',{
-          params:{
-            keyword,
-            city:self.$store.state.geo.position.city
-          }
-        })
-        if(status===200&&count>0){
-          let r= pois.filter(item=>item.photos.length).map(item=>{
-            return {
-              title:item.name,
-              pos:item.type.split(';')[0],
-              price:item.biz_ext.cost||'暂无',
-              img:item.photos[0].url,
-              url:'//abc.com'
+        if(self.list[this.kind].length === 0){
+          let {status,data:{count,pois}}=await self.$axios.get('/search/resultsByKeywords',{
+            params:{
+              keyword,
+              city:self.$store.state.geo.position.city
             }
           })
-          self.list[self.kind]=r.slice(0,9)
-        }else{
-          self.list[self.kind]=[]
+          if(status===200&&count>0){
+            let r= pois.filter(item=>item.photos.length).map(item=>{
+              return {
+                title:item.name,
+                pos:item.type.split(';')[0],
+                price:item.biz_ext.cost||'暂无',
+                img:item.photos[0].url,
+                url:'//abc.com'
+              }
+            })
+            self.list[self.kind]=r.slice(0,9)
+          }else{
+            self.list[self.kind]=[]
+          }
         }
       }
-    }
-  },
+    },100)
+  }
 
 }
 </script>

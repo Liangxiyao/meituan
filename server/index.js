@@ -12,7 +12,7 @@ import dbConfig from './dbs/config';
 import passport from './interface/utils/passport';
 import users from './interface/user';
 import geo from './interface/geo';
-
+import search from './interface/search';
 /************ add end************ */
 
 
@@ -68,6 +68,7 @@ async function start () {
   /*********路由表  start*********** */
   app.use(users.routes()).use(users.allowedMethods())
   app.use(geo.routes()).use(geo.allowedMethods())
+  app.use(search.routes()).use(search.allowedMethods())
   /*********路由表  end*********** */
 
   app.use((ctx) => {

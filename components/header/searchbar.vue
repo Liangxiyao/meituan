@@ -2,7 +2,7 @@
   <div class="search-panel">
     <el-row class="m-header-searchbar">
       <el-col :span="3" class="left">
-        <img src="//s0.meituan.net/bs/fe-web-meituan/e5eeaef/img/logo.png" alt="美团">
+        <a href="/"><img src="//s0.meituan.net/bs/fe-web-meituan/e5eeaef/img/logo.png" alt="美团"></a>
       </el-col>
       <el-col :span="15" class="center">
         <div class="wrapper">
@@ -16,15 +16,17 @@
           </button>
           <dl class="hotPlace" v-if="isHotPlace">
             <dt>热门搜索</dt>
-            <dd v-for="(item,idx) in hotPlace" :key="idx">{{item}}</dd>
+            <dd v-for="(item,idx) in hotPlace" :key="idx">
+              <a :href="'/products?keyword='+encodeURIComponent(item.name)"></a>{{item.name}}
+            </dd>
           </dl>
           <dl class="searchList" v-if="isSearchList">
-            <dd v-for="(item,idx) in searchList" :key="idx">{{item}}</dd>
+            <dd v-for="(item,idx) in searchList" :key="idx">{{item.name}}</dd>
           </dl>
         </div>
         <p class="suggest">
-          <a href="">故宫博物馆</a>
-        </p>
+          <a :href="'/products?keyword='+encodeURIComponent(item.name)" v-for="(item,idx) in hotPlace">{{item.name}}</a>
+        </p> 
         <ul class="nav">
           <li>
             <nuxt-link to="/" class="takeout">美团外卖</nuxt-link>
@@ -52,13 +54,14 @@
 </template>
 
 <script>
+import _ from 'lodash';
   export default {
     data() {
       return {
         search:'',
         isFocus:false,
-        hotPlace:['火锅','黄焖鸡'],
-        searchList:['故宫','故宫']
+        hotPlace:this.$store.state.home.hotPlace.slice(0,5),
+        searchList:[]
       }
     },
     computed:{
@@ -78,10 +81,17 @@
           this.isFocus = false
         },100)
       },
-      input(){
-        console.log('搜索的内容');
-        
-      }
+      input:_.debounce(async function(){
+        let city = this.$store.state.geo.position.city.replace('市','')
+        this.searchList = []
+        let {status, data:{top}} = await this.$axios.get('/search/top',{
+          params:{
+            input:this.search,
+            city
+          }
+        })
+        this.searchList = top.slice(0,10)
+      },50)
     }
   }
 </script>
