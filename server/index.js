@@ -13,6 +13,7 @@ import passport from './interface/utils/passport';
 import users from './interface/user';
 import geo from './interface/geo';
 import search from './interface/search';
+import categroy from './interface/categroy';
 /************ add end************ */
 
 
@@ -53,7 +54,7 @@ async function start () {
   const nuxt = new Nuxt(config)
 
   const {
-    host = process.env.HOST || '127.0.0.1',
+    host = process.env.HOST || '127.0.0.1', 
     port = process.env.PORT || 3000
   } = nuxt.options.server
 
@@ -69,6 +70,7 @@ async function start () {
   app.use(users.routes()).use(users.allowedMethods())
   app.use(geo.routes()).use(geo.allowedMethods())
   app.use(search.routes()).use(search.allowedMethods())
+  app.use(categroy.routes()).use(categroy.allowedMethods())
   /*********路由表  end*********** */
 
   app.use((ctx) => {

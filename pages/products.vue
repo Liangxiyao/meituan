@@ -42,6 +42,13 @@ export default {
   async asyncData(ctx){
     let keyword = ctx.query.keyword
     let city = ctx.store.state.geo.position.city
+    console.log(ctx.$axios.get('/search/resultsByKeywords',{
+      params:{
+        keyword,
+        city
+      }
+    }));
+    
     let {status,data:{count,pois}} = await ctx.$axios.get('/search/resultsByKeywords',{
       params:{
         keyword,

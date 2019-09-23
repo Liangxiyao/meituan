@@ -73,10 +73,12 @@
               margin-bottom: 3px;
               margin-top: 5px;
               cursor: pointer;
-
-              &:hover {
-                background: #F8F8F8;
-                color: #31BBAC;
+              a{
+                color:#666;
+                &:hover {
+                  background: #F8F8F8;
+                  color: #31BBAC;
+                }
               }
             }
 

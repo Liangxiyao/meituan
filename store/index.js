@@ -13,6 +13,7 @@ const store = () => new Vuex.Store({
   actions: {
     //nuxtServerInit将服务端的一些数据传到客户端
     async nuxtServerInit({ commit }, { req, app }) {
+      
       const {status, data: {province, city}} = await app.$axios.get('/geo/getPosition')
       commit('geo/setPosition', status === 200 ? { city, province } : { city: '', province: '' })
       

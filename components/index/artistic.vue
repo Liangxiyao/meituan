@@ -93,7 +93,7 @@ export default {
       let self = this
       if (tag === 'dd') {
         this.kind = dom.getAttribute('kind')
-        let keyword = dom.getAttribute('keyword')
+        let keyword = dom.getAttribute('keyword')  
         if(self.list[this.kind].length === 0){
           let {status,data:{count,pois}}=await self.$axios.get('/search/resultsByKeywords',{
             params:{

@@ -17,7 +17,7 @@
           <dl class="hotPlace" v-if="isHotPlace">
             <dt>热门搜索</dt>
             <dd v-for="(item,idx) in hotPlace" :key="idx">
-              <a :href="'/products?keyword='+encodeURIComponent(item.name)"></a>{{item.name}}
+              <a :href="'/products?keyword='+encodeURIComponent(item.name)">{{item.name}}</a>
             </dd>
           </dl>
           <dl class="searchList" v-if="isSearchList">
@@ -25,7 +25,7 @@
           </dl>
         </div>
         <p class="suggest">
-          <a :href="'/products?keyword='+encodeURIComponent(item.name)" v-for="(item,idx) in hotPlace">{{item.name}}</a>
+          <a v-for="(item,idx) in hotPlace" :key='idx' :href="'/products?keyword='+encodeURIComponent(item.name)">{{item.name}}</a>
         </p> 
         <ul class="nav">
           <li>
